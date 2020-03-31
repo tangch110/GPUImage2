@@ -61,7 +61,13 @@ public class RenderView:UIView, ImageConsumer {
         displayRenderbuffer = newDisplayRenderbuffer
         glBindRenderbuffer(GLenum(GL_RENDERBUFFER), displayRenderbuffer!)
 
-        sharedImageProcessingContext.context.renderbufferStorage(Int(GL_RENDERBUFFER), from:self.layer as! CAEAGLLayer)
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.main.async {
+            sharedImageProcessingContext.context.renderbufferStorage(Int(GL_RENDERBUFFER), from:self.layer as! CAEAGLLayer)
+            group.leave()
+        }
+        group.wait()
 
         var backingWidth:GLint = 0
         var backingHeight:GLint = 0
